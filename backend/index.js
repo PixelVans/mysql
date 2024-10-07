@@ -22,12 +22,7 @@ const db = mysql.createConnection({
 });
 
 // Serve the frontend's build files
-app.use(express.static(path.join(__dirname, '../frontend/build')));
 
-// Handles any requests that don't match the above
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../frontend/build', 'index.html'));
-});
 
 app.get("/", (req, res) => {
   res.json("hello I'm your local server");
@@ -85,6 +80,13 @@ app.put("/books/:id", (req, res) => {
     if (err) return res.send(err);
     return res.json(data);
   });
+});
+
+app.use(express.static(path.join(__dirname, '../frontend/build')));
+
+// Handles any requests that don't match the above
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '../frontend/build', 'index.html'));
 });
 
 const PORT = 5200;
