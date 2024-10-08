@@ -21,7 +21,7 @@ const Add = () => {
   const handleClick = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5200/books", book);
+      await axios.post("http://localhost:5200/api/books", book);
       navigate("/");
     } catch (err) {
       console.log(err);
