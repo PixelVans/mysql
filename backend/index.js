@@ -89,11 +89,12 @@ app.put("/books/:id", (req, res) => {
 //   res.sendFile(path.resolve(__dirname, '../frontend/build', 'index.html'));
 // });
 
-app.use(express.static(path.join(__dirname, '/frontend/dist')));
+app.use(express.static(path.join(__dirname, '/frontend/build')));
 
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname,'frontend','dist','index.html'))
-})
+  res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html'));
+});
+
 
 // Use PORT from environment variable or default to 5200
 const PORT = process.env.PORT || 5200;
