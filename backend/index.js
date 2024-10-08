@@ -9,19 +9,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Serve the frontend's build files
-app.use(express.static(path.join(__dirname, '/frontend/build')));
-
-// Handles any requests that don't match the above
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html'));
-});
-
 // Database configuration
 const db = mysql.createConnection({
   host: "localhost",  // Change this if you're using a different host on Render
   user: "root",
-  password: "memba123",  // Make sure to use environment variables for sensitive data
+  password: "memba123",  // Use environment variables for sensitive data in production
   database: "test",
   port: 3300,  // Adjust the port if necessary for production
 });
@@ -79,6 +71,19 @@ app.put("/api/books/:id", (req, res) => {
     if (err) return res.send(err);
     return res.json(data);
   });
+});
+
+
+app.use(express.static(path.join(__dirname, '../frontend/build')));
+
+// Serve React app for the root route
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+});
+
+// Catch-all handler to serve the React app for any other routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
 });
 
 // Use PORT from environment variable or default to 5200
