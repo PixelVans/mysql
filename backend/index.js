@@ -3,14 +3,19 @@ import mysql from "mysql";
 import cors from "cors";
 import path from "path"; // Import path
 
-
-
-
-const __dirname = path.resolve()
+const __dirname = path.resolve();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Serve the frontend's build files
+app.use(express.static(path.join(__dirname, '/frontend/build')));
+
+// Handles any requests that don't match the above
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html'));
+});
 
 // Database configuration
 const db = mysql.createConnection({
@@ -21,13 +26,8 @@ const db = mysql.createConnection({
   port: 3300,  // Adjust the port if necessary for production
 });
 
-// Test route
-app.get("/", (req, res) => {
-  res.json("Hello, I'm your local server");
-});
-
 // API routes
-app.get("/books", (req, res) => {
+app.get("/api/books", (req, res) => {
   const q = "SELECT * FROM books";
   db.query(q, (err, data) => {
     if (err) {
@@ -38,7 +38,7 @@ app.get("/books", (req, res) => {
   });
 });
 
-app.post("/books", (req, res) => {
+app.post("/api/books", (req, res) => {
   const q = "INSERT INTO books(title, desc, price, cover) VALUES (?)";
 
   const values = [
@@ -54,7 +54,7 @@ app.post("/books", (req, res) => {
   });
 });
 
-app.delete("/books/:id", (req, res) => {
+app.delete("/api/books/:id", (req, res) => {
   const bookId = req.params.id;
   const q = "DELETE FROM books WHERE id = ?";
 
@@ -64,7 +64,7 @@ app.delete("/books/:id", (req, res) => {
   });
 });
 
-app.put("/books/:id", (req, res) => {
+app.put("/api/books/:id", (req, res) => {
   const bookId = req.params.id;
   const q = "UPDATE books SET title = ?, desc = ?, price = ?, cover = ? WHERE id = ?";
 
@@ -80,21 +80,6 @@ app.put("/books/:id", (req, res) => {
     return res.json(data);
   });
 });
-
-
-// app.use(express.static(path.join(__dirname, '../frontend/build')));
-
-
-// app.get('*', (req, res) => {
-//   res.sendFile(path.resolve(__dirname, '../frontend/build', 'index.html'));
-// });
-
-app.use(express.static(path.join(__dirname, '/frontend/build')));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html'));
-});
-
 
 // Use PORT from environment variable or default to 5200
 const PORT = process.env.PORT || 5200;
