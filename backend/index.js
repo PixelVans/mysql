@@ -2,11 +2,11 @@ import express from "express";
 import mysql from "mysql";
 import cors from "cors";
 import path from "path"; // Import path
-import { fileURLToPath } from 'url'; // Import fileURLToPath
 
-// Determine __dirname in ES module
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+
+
+
+const __dirname = path.resolve()
 
 const app = express();
 app.use(cors());
@@ -14,20 +14,19 @@ app.use(express.json());
 
 // Database configuration
 const db = mysql.createConnection({
-  host: "localhost",
+  host: "localhost",  // Change this if you're using a different host on Render
   user: "root",
-  password: "memba123",
+  password: "memba123",  // Make sure to use environment variables for sensitive data
   database: "test",
-  port: 3300,
+  port: 3300,  // Adjust the port if necessary for production
 });
 
-// Serve the frontend's build files
-
-
+// Test route
 app.get("/", (req, res) => {
-  res.json("hello I'm your local server");
+  res.json("Hello, I'm your local server");
 });
 
+// API routes
 app.get("/books", (req, res) => {
   const q = "SELECT * FROM books";
   db.query(q, (err, data) => {
@@ -40,7 +39,7 @@ app.get("/books", (req, res) => {
 });
 
 app.post("/books", (req, res) => {
-  const q = "INSERT INTO books(title,desc,price,cover) VALUES (?)";
+  const q = "INSERT INTO books(title, desc, price, cover) VALUES (?)";
 
   const values = [
     req.body.title,
@@ -67,7 +66,7 @@ app.delete("/books/:id", (req, res) => {
 
 app.put("/books/:id", (req, res) => {
   const bookId = req.params.id;
-  const q = "UPDATE books SET title= ?, desc= ?, price= ?, cover= ? WHERE id = ?";
+  const q = "UPDATE books SET title = ?, desc = ?, price = ?, cover = ? WHERE id = ?";
 
   const values = [
     req.body.title,
@@ -82,15 +81,24 @@ app.put("/books/:id", (req, res) => {
   });
 });
 
-app.use(express.static(path.join(__dirname, '../frontend/build')));
 
-// Handles any requests that don't match the above
+// app.use(express.static(path.join(__dirname, '../frontend/build')));
+
+
+// app.get('*', (req, res) => {
+//   res.sendFile(path.resolve(__dirname, '../frontend/build', 'index.html'));
+// });
+
+app.use(express.static(path.join(__dirname, '/frontend/dist')));
+
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../frontend/build', 'index.html'));
-});
+    res.sendFile(path.join(__dirname,'frontend','dist','index.html'))
+})
 
-const PORT = 5200;
+// Use PORT from environment variable or default to 5200
+const PORT = process.env.PORT || 5200;
 
+// Start the server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
