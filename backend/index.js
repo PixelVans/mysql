@@ -11,11 +11,11 @@ app.use(express.json());
 
 // Database configuration
 const db = mysql.createConnection({
-  host: "localhost",  // Change this if you're using a different host on Render
-  user: "root",
-  password: "memba123",  // Use environment variables for sensitive data in production
-  database: "test",
-  port: 3300,  // Adjust the port if necessary for production
+  host: "beghyzmtw4yqwqhcjref-mysql.services.clever-cloud.com",  // Change this if you're using a different host on Render
+  user: "ueguyzjufywdfihb",
+  password: "9wgjRw3zqrHG97uE9wGB",  // Use environment variables for sensitive data in production
+  database: "beghyzmtw4yqwqhcjref",
+  port: 3306,  // Adjust the port if necessary for production
 });
 
 // API routes
@@ -31,20 +31,25 @@ app.get("/api/books", (req, res) => {
 });
 
 app.post("/api/books", (req, res) => {
-  const q = "INSERT INTO books(title, desc, price, cover) VALUES (?)";
+  const q = "INSERT INTO books(title, `desc`, price, cover) VALUES (?)"; // Changed "desc" to "description"
 
   const values = [
     req.body.title,
-    req.body.desc,
+    req.body.desc, // Changed "desc" to "description"
     req.body.price,
     req.body.cover,
   ];
 
   db.query(q, [values], (err, data) => {
-    if (err) return res.send(err);
-    return res.json(data);
+    if (err) {
+      console.error('Error inserting book:', err); // Log the error to the console
+      return res.status(500).json({ message: 'Error inserting book', error: err }); // Return a 500 status with error message
+    }
+    console.log('Book inserted successfully:', data); // Log success message with data
+    return res.status(201).json(data); // Return a 201 status for created resource
   });
 });
+
 
 app.delete("/api/books/:id", (req, res) => {
   const bookId = req.params.id;
@@ -58,7 +63,7 @@ app.delete("/api/books/:id", (req, res) => {
 
 app.put("/api/books/:id", (req, res) => {
   const bookId = req.params.id;
-  const q = "UPDATE books SET title = ?, desc = ?, price = ?, cover = ? WHERE id = ?";
+  const q = "UPDATE books SET title = ?, `desc` = ?, price = ?, cover = ? WHERE id = ?";
 
   const values = [
     req.body.title,
