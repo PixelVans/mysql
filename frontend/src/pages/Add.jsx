@@ -21,14 +21,14 @@ const Add = () => {
   const handleClick = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5200/api/books", book);
+      await axios.post("https://mysqlsaww.onrender.com/api/books", book); // Replace with your backend URL
       navigate("/");
     } catch (err) {
       console.log(err);
-      setError(true)
+      setError(true);
     }
   };
-
+  
   return (
     <div className="form">
       <h1>Add New Book</h1>

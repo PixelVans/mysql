@@ -10,7 +10,7 @@ const Books = () => {
   useEffect(() => {
     const fetchAllBooks = async () => {
       try {
-        const res = await axios.get("http://localhost:5200/api/books");
+        const res = await axios.get("https://mysqlsaww.onrender.com/api/books"); // Replace with your backend URL
         setBooks(res.data);
       } catch (err) {
         console.log(err);
@@ -18,18 +18,18 @@ const Books = () => {
     };
     fetchAllBooks();
   }, []);
-
+  
   console.log(books);
-
+  
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5200/api/books/${id}`);
-      window.location.reload()
+      await axios.delete(`https://mysqlsaww.onrender.com/api/books/${id}`); // Replace with your backend URL
+      window.location.reload();
     } catch (err) {
       console.log(err);
     }
   };
-
+  
   return (
     <div>
       <h1> Whispering Pages </h1>
